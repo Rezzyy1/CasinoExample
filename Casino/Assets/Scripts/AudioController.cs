@@ -14,9 +14,15 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioClip clip;
     [SerializeField] private AudioSource audioS;
 
-    private void Update()
+    private float volume = 0;
+
+    private void Start()
     {
-        audioS.volume = slider.value;
+        // Привязка обработчика к событию onValueChanged
+        slider.onValueChanged.AddListener(OnSliderValueChanged);
+        volume = PlayerPrefs.GetFloat("Volume", 1f);
+        audioS.volume = volume;
+        slider.value = volume;
     }
 
     public void OnOffAudio()
@@ -31,6 +37,14 @@ public class AudioController : MonoBehaviour
             AudioListener.volume = 1;
             audioButton.GetComponent<Image>().sprite = audioOn;
         }
+    }
+
+    public void OnSliderValueChanged(float value)
+    {
+        volume = value;
+        PlayerPrefs.SetFloat("Volume", volume);
+        PlayerPrefs.Save();
+        audioS.volume = volume;
     }
 
     //public void PlaySound()
